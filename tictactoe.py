@@ -1,5 +1,4 @@
 
-
 def newBoard():
     board = [[None]*3 for i in range(3)]
     return board
