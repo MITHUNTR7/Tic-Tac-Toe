@@ -12,16 +12,78 @@ def render(board):
             if board[r][c] is None:
                 print(" ",end="")
             else:
-                print(board[r][c],end="")        
+                print(board[r][c],end="")             
         print("|")
              
     print("  -----")
 
+def getMove(name):
+    print(f"{name}, What is your move's X co-ordinate(row no.) ?: ",end="")
+    x = int(input())
+    print(f"{name}, What is your move's Y co-ordinate(column no.) ?: ",end="")
+    y = int(input())
+    return (x, y)
+
+def makeMove(board, coords, player):
+    x, y = coords
+    updatedBoard = board
+    if updatedBoard[x][y]:
+        raise Exception(f"Illegal move ({x}, {y}) square already taken")
+    updatedBoard[x][y] = player
+    return updatedBoard
+
+def getWinner(board):
+    lineCoords = getLines()
+    for line in lineCoords:
+        lineValues = [board[x][y] for (x, y) in line]
+        if len(set(lineValues)) == 1 and lineValues[0]:
+            return lineValues[0]
+    return None
+    
+    
+def getLines():
+    cols = []
+    for x in range(3):
+        col = []
+        for y in range(3):
+            col.append((x, y))
+        cols.append(col)
+    
+    rows = []
+    for y in range(3):
+        row = []
+        for x in range(3):
+            row.append((x, y))
+        rows.append(row)
+        
+    diagonals = [[(0, 0), (1, 1), (2, 2)], [(0, 2), (1, 1), (2, 0)]]
+    
+    return rows + cols + diagonals
+    
+def checkDraw(board):
+    for x in range(3):
+        for y in range(3):
+            # There is atleast one None value inside the board
+            if not board[x][y]: 
+                return False
+    return True
+
+players = [("X", "Player 1"), ("O", "Player 2")]
+playerMap = {"X": "Player 1", "O" : "Player 2"}
+turn = 0
 board = newBoard()
-board[0][2] = "X"
-board[1][0] = "O"
-board[1][1] = "O"
-board[1][2] = "X"
-board[2][2] = "X"
-render(board)
+while True:
+    render(board)
+    ID, name = players[turn % 2]
+    moveCoords = getMove(name)
+    makeMove(board, moveCoords, ID)
+    if getWinner(board):
+        render(board)
+        print(f"{playerMap[getWinner(board)]} wins!!!")
+        break
+    if checkDraw(board):
+        render(board)
+        print("Game ends in a draw")
+        break    
+    turn += 1
     
