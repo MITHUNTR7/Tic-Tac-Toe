@@ -1,3 +1,4 @@
+import random
 
 def newBoard():
     board = [[None]*3 for i in range(3)]
@@ -68,6 +69,17 @@ def checkDraw(board):
                 return False
     return True
 
+
+def randomAI(board, player):
+    legalCoords = []
+    for x in range(3):
+        for y in range(3):
+            if not board[x][y]:
+                legalCoords.append((x, y))
+    return random.choice(legalCoords)
+
+
+
 players = [("X", "Player 1"), ("O", "Player 2")]
 playerMap = {"X": "Player 1", "O" : "Player 2"}
 turn = 0
@@ -75,7 +87,7 @@ board = newBoard()
 while True:
     render(board)
     ID, name = players[turn % 2]
-    moveCoords = getMove(name)
+    moveCoords = randomAI(board, name)
     makeMove(board, moveCoords, ID)
     if getWinner(board):
         render(board)
