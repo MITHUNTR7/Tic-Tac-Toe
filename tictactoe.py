@@ -78,7 +78,22 @@ def randomAI(board, player):
                 legalCoords.append((x, y))
     return random.choice(legalCoords)
 
-
+def findsWinningMoveAI(board, player): # Returns the winning move if any else it will return none
+    lineCoords = getLines()
+    for line in lineCoords:
+        nPlayer = 0 # number of cells occupied by current player
+        nEmpty = 0 # number of empty cells in the current line
+        lastEmpty = None # last empty coordinate in the line
+        for (x, y) in line:
+            if board[x][y] == player:
+                nPlayer += 1
+            elif not board[x][y]:
+                nEmpty += 1
+                lastEmpty = (x, y)
+        if nPlayer == 2 and nEmpty == 1:
+            return lastEmpty
+    return None
+        
 
 players = [("X", "Player 1"), ("O", "Player 2")]
 playerMap = {"X": "Player 1", "O" : "Player 2"}
@@ -87,7 +102,8 @@ board = newBoard()
 while True:
     render(board)
     ID, name = players[turn % 2]
-    moveCoords = randomAI(board, name)
+    # will try to find a winning move if it exists else random move is returned
+    moveCoords = findsWinningMoveAI(board, ID) if findsWinningMoveAI(board, ID) else randomAI(board, name)
     makeMove(board, moveCoords, ID)
     if getWinner(board):
         render(board)
