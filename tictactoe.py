@@ -35,33 +35,14 @@ def makeMove(board, coords, player):
     return updatedBoard
 
 def getWinner(board):
-    lineCoords = getLines()
+    lineCoords = utils.getLines()
     for line in lineCoords:
         lineValues = [board[x][y] for (x, y) in line]
         if len(set(lineValues)) == 1 and lineValues[0]:
             return lineValues[0]
     return None
-    
-    
-def getLines():
-    cols = []
-    for x in range(3):
-        col = []
-        for y in range(3):
-            col.append((x, y))
-        cols.append(col)
-    
-    rows = []
-    for y in range(3):
-        row = []
-        for x in range(3):
-            row.append((x, y))
-        rows.append(row)
-        
-    diagonals = [[(0, 0), (1, 1), (2, 2)], [(0, 2), (1, 1), (2, 0)]]
-    
-    return rows + cols + diagonals
-    
+
+
 def checkDraw(board):
     for x in range(3):
         for y in range(3):
@@ -69,7 +50,6 @@ def checkDraw(board):
             if not board[x][y]: 
                 return False
     return True
-
 
 def randomAI(board, player):
     legalCoords = []
@@ -81,7 +61,7 @@ def randomAI(board, player):
 
 def findsWinningMoveAI(board, player): 
     # Returns the winning move if any else return random move
-    lineCoords = getLines()
+    lineCoords = utils.getLines()
     for line in lineCoords:
         nPlayer = 0 # number of cells occupied by current player
         nEmpty = 0 # number of empty cells in the current line
@@ -96,7 +76,7 @@ def findsWinningMoveAI(board, player):
             return lastEmpty
     return None
 
-        
+
 def findsWinningAndLosingMovesAI(board, player):
     wMove = findsWinningMoveAI(board, player)
     if wMove:
@@ -106,7 +86,11 @@ def findsWinningAndLosingMovesAI(board, player):
         return oppWMove
     
     return randomAI(board, player)
- 
+
+def humanPlayer(board, player):
+    x = int(input(f"{player}, What's your X-coordinate: "))
+    y = int(input(f"{player}, What's your Y-coordinate: "))
+    return (x, y)
 
 players = [("X", "Player 1"), ("O", "Player 2")]
 playerMap = {"X": "Player 1", "O" : "Player 2"}
@@ -115,7 +99,7 @@ board = newBoard()
 while True:
     render(board)
     ID, name = players[turn % 2]
-    moveCoords = findsWinningAndLosingMovesAI(board, ID)
+    moveCoords = humanPlayer(board, ID)
     makeMove(board, moveCoords, ID)
     if getWinner(board):
         render(board)
@@ -126,4 +110,3 @@ while True:
         print("Game ends in a draw")
         break    
     turn += 1
-    
