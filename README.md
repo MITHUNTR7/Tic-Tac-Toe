@@ -9,3 +9,4 @@ This is a simple Tic-Tac-Toe game implemented in Python. The game allows two pla
 3. Run the Python file using the command `python tic_tac_toe.py`.
 4. Follow the on-screen instructions to play the game.
 
+![A snapshot of the game](tictactoe-example.png)
