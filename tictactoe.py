@@ -1,5 +1,5 @@
 import random
-
+from . import utils
 def newBoard():
     board = [[None]*3 for i in range(3)]
     return board
@@ -78,7 +78,8 @@ def randomAI(board, player):
                 legalCoords.append((x, y))
     return random.choice(legalCoords)
 
-def findsWinningMoveAI(board, player): # Returns the winning move if any else it will return none
+def findsWinningMoveAI(board, player): 
+    # Returns the winning move if any else return random move
     lineCoords = getLines()
     for line in lineCoords:
         nPlayer = 0 # number of cells occupied by current player
@@ -93,7 +94,18 @@ def findsWinningMoveAI(board, player): # Returns the winning move if any else it
         if nPlayer == 2 and nEmpty == 1:
             return lastEmpty
     return None
+
         
+def findsWinningAndLosingMovesAI(board, player):
+    wMove = findsWinningMoveAI(board, player)
+    if wMove:
+        return wMove
+    oppWMove = findsWinningMoveAI(board, utils.getOpponent(player))
+    if oppWMove:
+        return oppWMove
+    
+    return randomAI(board, player)
+ 
 
 players = [("X", "Player 1"), ("O", "Player 2")]
 playerMap = {"X": "Player 1", "O" : "Player 2"}
@@ -102,8 +114,7 @@ board = newBoard()
 while True:
     render(board)
     ID, name = players[turn % 2]
-    # will try to find a winning move if it exists else random move is returned
-    moveCoords = findsWinningMoveAI(board, ID) if findsWinningMoveAI(board, ID) else randomAI(board, name)
+    moveCoords = findsWinningAndLosingMovesAI(board, ID)
     makeMove(board, moveCoords, ID)
     if getWinner(board):
         render(board)
