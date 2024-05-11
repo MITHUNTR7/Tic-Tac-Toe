@@ -1,24 +1,8 @@
 import random
 import utils
 import sys
-
-def newBoard():
-    board = [[None]*3 for i in range(3)]
-    return board
-
-def render(board):
-    print("  0","1","2")
-    print("  -----")
-    for r in range(len(board)):
-        print(r,"|",end="")
-        for c in range(len(board[r])):
-            if board[r][c] is None:
-                print(" ",end="")
-            else:
-                print(board[r][c],end="")             
-        print("|")
-             
-    print("  -----")
+import minimax
+from copy import deepcopy
 
 def getMove(board, playerID, playerAlgo):
     if playerAlgo == "random_ai":
@@ -29,14 +13,16 @@ def getMove(board, playerID, playerAlgo):
         return findsWinningAndLosingMovesAI(board, playerID)
     elif playerAlgo == "human_player":
         return  humanPlayer(board, playerID)
+    elif playerAlgo == "minimax_ai":
+        return minimax.miniMaxAI(board, playerID)
     else:
         raise Exception("Unknown algorithm, Try again!!!")
 
 
 def makeMove(board, coords, player):
     x, y = coords
-    updatedBoard = board
-    if updatedBoard[x][y]:
+    updatedBoard = deepcopy(board)
+    if updatedBoard[x][y] is not None:
         raise Exception(f"Illegal move ({x}, {y}) square already taken")
     updatedBoard[x][y] = player
     return updatedBoard
@@ -111,40 +97,42 @@ def play(player1, player2):
     players = [("X", player1), ("O", player2)]
     playerMap = {"X": player1, "O" : player2}
     turn = 0
-    board = newBoard()
+    board = utils.newBoard()
     while True:
-        # render(board)
+        utils.render(board)
         ID, name = players[turn % 2]
         moveCoords = getMove(board, ID, name)
-        makeMove(board, moveCoords, ID)
+        board = makeMove(board, moveCoords, ID)
         if getWinner(board):
-            # render(board)
-            # print(f"{name}-{ID}, wins!!!")
-            return 1 if ID == "X" else 2
-            # break
+            utils.render(board)
+            print(f"{name}-{ID}, wins!!!")
+            # return 1 if ID == "X" else 2
+            break
         if checkDraw(board):
-            # render(board)
-            # print("Game ends in a draw")
-            return 0
-            # break    
+            utils.render(board)
+            print("Game ends in a draw")
+            # return 0
+            break
         turn += 1
 
+# def repeatedBattle(player1, player2):
+#     p1Wins, p2Wins, draws = 0, 0, 0
+#     for i in range(1000):
+#         n = play(player1, player2)
+#         if n == 1:
+#             p1Wins += 1
+#         elif n == 2:
+#             p2Wins += 1
+#         else:
+#             draws += 1
+#     print(f"{player1} win percentage is {(p1Wins / 1000) * 100}%")
+#     print(f"{player2} win percentage is {(p2Wins / 1000) * 100}%")
+#     print(f"Number of draws = {draws}")
 
-# if __name__ == "__main__":
-#     player1 = sys.argv[1]
-#     player2 = sys.argv[2]
-    
-#     play(player1, player2)
-def repeatedBattle(player1, player2):
-    p1Wins, p2Wins, draws = 0, 0, 0
-    for i in range(1000):
-        n = play(player1, player2)
-        if n == 1: p1Wins += 1
-        elif n == 2: p2Wins += 1
-        else: draws += 1
-    print(f"{player1} win percentage is {(p1Wins / 1000) * 100}%")
-    print(f"{player2} win percentage is {(p2Wins / 1000) * 100}%")
-    print(f"Number of draws = {draws}")
-    
-repeatedBattle("random_ai","random_ai")
-    
+
+# repeatedBattle("random_ai", "random_ai")
+
+if __name__ == "__main__":
+    player1 = sys.argv[1]
+    player2 = sys.argv[2]
+    play(player1, player2)
