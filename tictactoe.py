@@ -3,6 +3,7 @@ import utils
 import sys
 import minimax
 from copy import deepcopy
+import timeit
 
 def getMove(board, playerID, playerAlgo):
     if playerAlgo == "random_ai":
@@ -131,6 +132,7 @@ def play(player1, player2):
 
 
 # repeatedBattle("random_ai", "random_ai")
+
 
 if __name__ == "__main__":
     player1 = sys.argv[1]

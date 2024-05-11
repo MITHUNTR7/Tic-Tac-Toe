@@ -34,8 +34,17 @@ def miniMaxAI(board, player):
 
     for move in legalMoves:
         newBoard = engine.makeMove(board, move, player)
-        score = miniMaxScore(newBoard, utils.getOpponent(player), player)
+        score = miniMaxWithCache(newBoard, utils.getOpponent(player), player)
         if bestScore is None or score > bestScore:
             bestScore = score
             bestMove = move
     return bestMove
+
+
+cache = {}
+def miniMaxWithCache(board, playerToMove, playerToOptimise):
+    boardCacheKey = str(board)
+    if boardCacheKey not in cache:
+        score = miniMaxScore(board, playerToMove, playerToOptimise)
+        cache[boardCacheKey] = score
+    return cache[boardCacheKey]
